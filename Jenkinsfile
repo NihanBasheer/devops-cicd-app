@@ -6,7 +6,6 @@ pipeline {
     }
 
     stages {
-
         stage('Checkout') {
             steps {
                 echo 'Pulling source code from GitHub'
@@ -17,9 +16,7 @@ pipeline {
         stage('Check Docker') {
             steps {
                 echo 'Checking Docker installation'
-
-                bat '''
-                    where docker
+                sh '''
                     docker --version
                     docker compose version
                 '''
@@ -29,30 +26,21 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building Docker image'
-
-                bat '''
-                    docker build -t devops-cicd-app .
-                '''
+                sh 'docker build -t devops-cicd-app .'
             }
         }
 
         stage('Deploy') {
             steps {
-                echo 'Deploying application using Docker Compose'
-
-                bat '''
-                    docker compose up -d --build
-                '''
+                echo 'Deploying application'
+                sh 'docker compose up -d --build'
             }
         }
 
         stage('Verify') {
             steps {
-                echo 'Verifying application deployment'
-
-                bat '''
-                    docker compose ps
-                '''
+                echo 'Verifying deployment'
+                sh 'docker compose ps'
             }
         }
     }
@@ -63,7 +51,7 @@ pipeline {
         }
 
         failure {
-            echo 'FAILURE: CI/CD Pipeline failed. Check the Console Output.'
+            echo 'FAILURE: CI/CD Pipeline failed. Check Console Output.'
         }
 
         always {
