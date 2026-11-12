@@ -16,7 +16,7 @@ pipeline {
         stage('Check Docker') {
             steps {
                 echo 'Checking Docker installation'
-                sh '''
+                bat '''
                     docker --version
                     docker compose version
                 '''
@@ -26,21 +26,21 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building Docker image'
-                sh 'docker build -t devops-cicd-app .'
+                bat 'docker build -t devops-cicd-app .'
             }
         }
 
         stage('Deploy') {
             steps {
                 echo 'Deploying application'
-                sh 'docker compose up -d --build'
+                bat 'docker compose up -d --build'
             }
         }
 
         stage('Verify') {
             steps {
                 echo 'Verifying deployment'
-                sh 'docker compose ps'
+                bat 'docker compose ps'
             }
         }
     }
