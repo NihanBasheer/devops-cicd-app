@@ -13,8 +13,8 @@ pipeline {
 
         stage('Check Docker') {
             steps {
-                sh 'docker --version'
-                sh 'docker compose version'
+                bat 'docker --version'
+                bat 'docker compose version'
             }
         }
 
@@ -28,20 +28,20 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'Deploying containers'
-                sh 'docker compose up -d --build --remove-orphans'
+                bat 'docker compose up -d --build --remove-orphans'
             }
         }
 
         stage('Verify') {
             steps {
-                sh 'docker compose ps'
+                bat 'docker compose ps'
             }
         }
     }
 
     post {
         failure {
-            sh 'docker compose logs --no-color || true'
+            bat 'docker compose logs --no-color || true'
         }
     }
 }
