@@ -21,7 +21,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building frontend and backend'
-                sh 'docker compose build'
+                bat 'docker compose build'
             }
         }
 
