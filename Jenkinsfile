@@ -1,6 +1,9 @@
 pipeline {
-
     agent any
+
+    options {
+        skipDefaultCheckout(true)
+    }
 
     stages {
 
@@ -13,35 +16,58 @@ pipeline {
 
         stage('Check Docker') {
             steps {
-                bat 'docker --version'
-                bat 'docker compose version'
+                echo 'Checking Docker installation'
+
+                bat '''
+                    where docker
+                    docker --version
+                    docker compose version
+                '''
             }
         }
 
         stage('Build') {
             steps {
-                echo 'Building frontend and backend'
-                bat 'docker compose build'
+                echo 'Building Docker image'
+
+                bat '''
+                    docker build -t devops-cicd-app .
+                '''
             }
         }
 
         stage('Deploy') {
             steps {
-                echo 'Deploying containers'
-                bat 'docker compose up -d --build --remove-orphans'
+                echo 'Deploying application using Docker Compose'
+
+                bat '''
+                    docker compose up -d --build
+                '''
             }
         }
 
         stage('Verify') {
             steps {
-                bat 'docker compose ps'
+                echo 'Verifying application deployment'
+
+                bat '''
+                    docker compose ps
+                '''
             }
         }
     }
 
     post {
+        success {
+            echo 'SUCCESS: CI/CD Pipeline completed successfully!'
+        }
+
         failure {
-            bat 'docker compose logs --no-color || true'
+            echo 'FAILURE: CI/CD Pipeline failed. Check the Console Output.'
+        }
+
+        always {
+            echo 'Jenkins Pipeline execution finished.'
         }
     }
 }
